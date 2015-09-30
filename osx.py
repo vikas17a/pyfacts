@@ -2,13 +2,13 @@ import re
 import subprocess
 import socket
 
-def ipaddress():
+def _ipaddress():
   p=subprocess.Popen(["/sbin/ifconfig"],stdout=subprocess.PIPE)
   ip=p.communicate()
   pattern=re.compile(r'inet\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
   return pattern.findall(ip[0])
 
-def private_ip():
+def _private_ip():
   ips=[]
   p=subprocess.Popen(["/sbin/ifconfig"],stdout=subprocess.PIPE)
   ip=p.communicate()
@@ -23,44 +23,45 @@ def private_ip():
     ips.append(ip_data[0])
   return ips
 
-def public_ip():
-  return list(set(ipaddress())-set(private_ip()))
-
-def fqdn():
-  return socket.gethostname()
-
-def profiler_hardware_datatype():
-  data = filter(None, subprocess.Popen(["system_profiler","SPHardwareDataType"], stdout=subprocess.PIPE).communicate()[0].split('\n'))
+def ip():
+  ips = list(set(_ipaddress())-set(_private_ip()))
+  return ', '.join(ips)
+  
+def _profiler_hardware_datatype():
+  data = filter(None, subprocess.Popen(["/usr/sbin/system_profiler","SPHardwareDataType"], stdout=subprocess.PIPE).communicate()[0].split('\n'))
   data_dict = {}
   for d in data[2:]:
     data_dict[ d.split(':')[0].strip() ] = d.split(':')[1].strip()
   return data_dict
 
 def memory():
-  return profiler_hardware_datatype()['Memory']
+  return _profiler_hardware_datatype()['Memory']
 
-#def swap():
-
-def cpu_cores():
-  try:
-    return profiler_hardware_datatype()['Total Number of Cores']
-  except: 
-    return profiler_hardware_datatype()['Total Number Of Cores']
-
-def os():
+def os_name():
   return subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE).communicate()[0].split('\n')[0].split('\t')[1]
 
-def os_version():
-  return subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE).communicate()[0].split('\n')[1].split('\t')[1]
-
-def processor_speed():
-  return profiler_hardware_datatype()['Processor Speed']
-
-def cpu_type():
-  return profiler_hardware_datatype()['Processor Name']
+def cpu():
+  return _profiler_hardware_datatype()['Processor Name']
 
 def serial_number():
-  return profiler_hardware_datatype()['Serial Number (system)']
+  return _profiler_hardware_datatype()['Serial Number (system)']
 
-#def cpu_threads():
-#  return profiler_hardware_datatype()['Memory']
+def disk():
+    p = subprocess.Popen(["df","-h"], stdout=subprocess.PIPE).communicate()[0].split('\n')
+    data_dict = {}
+    for mount in p[1:]:
+        if len(mount) > 1:
+            if mount.split()[0] == "map":
+                data_dict[mount.split()[-1]] = mount.split()[2]
+            else:
+                data_dict[mount.split()[-1]] = mount.split()[1]
+    return ', '.join('{0} {1}'.format(key, val) for key, val in sorted(data_dict.items()))
+
+def model():
+    return _profiler_hardware_datatype()['Model Name']
+
+def child_ip():
+    return 'N/A'
+
+def category():
+    return 'OSX'
