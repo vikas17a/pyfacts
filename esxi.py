@@ -19,11 +19,30 @@ def memory():
     mem = int(p.communicate()[0].split()[2])/1024/1024/1024
     return str(mem) + "GB"
 
+def processor_speed():
+    p = subprocess.Popen(["vim-cmd","hostsvc/hosthardware"], stdout=subprocess.PIPE)
+    cpu = p.communicate()
+    pattern = re.compile(r'hz = (\d{10}),')
+    return pattern.findall(cpu[0])[0]
+
+def cpu_cores():
+    p = subprocess.Popen(["vim-cmd","hostsvc/hosthardware"], stdout=subprocess.PIPE)
+    cpu = p.communicate()
+    pattern = re.compile(r'numCpuCores = (\d+)')
+    return int(pattern.findall(cpu[0])[0])
+
 def cpu():
     p = subprocess.Popen(["vim-cmd","hostsvc/hosthardware"], stdout=subprocess.PIPE)
     cpu = p.communicate()
     pattern = re.compile(r'description = "([^"]+)')
     return pattern.findall(cpu[0])[0]
+
+def cpu_threads():
+    p = subprocess.Popen(["vim-cmd","hostsvc/hosthardware"], stdout=subprocess.PIPE)
+    cpu = p.communicate()
+    pattern = re.compile(r'numCpuThreads = (\d+)')
+    return int(pattern.findall(cpu[0])[0])
+
 
 def serial_number():
      return profile()['Serial Number']
@@ -56,7 +75,7 @@ def child_ip():
               allvms = allvms.split()
               vm[allvms[0]] = [allvms[1]]
     except:
-        pass 
+        pass
     for vm_id in vm:
       p = subprocess.Popen(['vim-cmd', '/vmsvc/get.summary', vm_id], stdout=subprocess.PIPE).communicate()
       data = p[0].split()

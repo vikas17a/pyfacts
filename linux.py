@@ -22,7 +22,7 @@ def private_ip():
   for ip_data in pattern.findall(ip[0]):
     ips.append(ip_data[0])
   return ips
-  
+
 def ip():
   ips = list(set(ipaddress())-set(private_ip()))
   if len(ips) > 0:
@@ -33,7 +33,7 @@ def ip():
          return p
      else:
          return ""
-     
+
 def os_name():
   return subprocess.Popen(["uname"], stdout=subprocess.PIPE).communicate()[0]
 
@@ -74,3 +74,15 @@ def model():
 
 def child_ip():
     return "N/A"
+
+def fqdn():
+  return socket.gethostname()
+
+def swap():
+  return subprocess.Popen(["grep","SwapTotal","/proc/meminfo"], stdout=subprocess.PIPE).communicate()[0].split()[1:]
+
+def cpu_cores():
+  return subprocess.Popen(["grep","-m1","cores","/proc/cpuinfo"], stdout=subprocess.PIPE).communicate()[0].split()[-1]
+
+def cpu_threads():
+  return subprocess.Popen(["grep","-c","processor","/proc/cpuinfo"], stdout=subprocess.PIPE).communicate()[0].split()[-1]

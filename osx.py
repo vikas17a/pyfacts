@@ -26,7 +26,7 @@ def private_ip():
 def ip():
   ips = list(set(ipaddress())-set(private_ip()))
   return ', '.join(ips)
-  
+
 def profiler_hardware_datatype():
   data = filter(None, subprocess.Popen(["/usr/sbin/system_profiler","SPHardwareDataType"], stdout=subprocess.PIPE).communicate()[0].split('\n'))
   data_dict = {}
@@ -42,6 +42,12 @@ def os_name():
 
 def cpu():
   return profiler_hardware_datatype()['Processor Name']
+
+def cpu_cores():
+  try:
+    return profiler_hardware_datatype()['Total Number of Cores']
+  except:
+    return profiler_hardware_datatype()['Total Number Of Cores']
 
 def serial_number():
   return profiler_hardware_datatype()['Serial Number (system)']
@@ -62,3 +68,12 @@ def model():
 
 def child_ip():
     return "N/A"
+
+def fqdn():
+  return socket.gethostname()
+
+def processor_speed():
+  return profiler_hardware_datatype()['Processor Speed']
+
+def cpu_type():
+  return profiler_hardware_datatype()['Processor Name']
