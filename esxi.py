@@ -1,7 +1,7 @@
 import subprocess
 import re
 
-def _profile():
+def profile():
      p = subprocess.Popen(["esxcli", "hardware", "platform", "get"], stdout=subprocess.PIPE).communicate()[0].split('\n')
      data_dict = {}
      for d in p[0:]:
@@ -26,10 +26,10 @@ def cpu():
     return pattern.findall(cpu[0])[0]
 
 def serial_number():
-     return _profile()['Serial Number']
+     return profile()['Serial Number']
 
 def model():
-     return _profile()['Product Name']
+     return profile()['Product Name']
 
 def os_name():
     p = subprocess.Popen(["esxcli", "system", "version", "get"], stdout=subprocess.PIPE).communicate()[0].split('\n')
@@ -46,9 +46,6 @@ def disk():
             data_dict[mount.split()[0]] = mount.split()[5]
     return ', '.join('{0} {1}'.format(key, val) for key, val in sorted(data_dict.items()))
 
-def category():
-    return 'esxi'
-    
 def child_ip():
     p=subprocess.Popen(['vim-cmd', 'vmsvc/getallvms'], stdout=subprocess.PIPE).communicate()
     data=p[0].split('\n')

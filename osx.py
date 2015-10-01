@@ -2,13 +2,13 @@ import re
 import subprocess
 import socket
 
-def _ipaddress():
+def ipaddress():
   p=subprocess.Popen(["/sbin/ifconfig"],stdout=subprocess.PIPE)
   ip=p.communicate()
   pattern=re.compile(r'inet\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
   return pattern.findall(ip[0])
 
-def _private_ip():
+def private_ip():
   ips=[]
   p=subprocess.Popen(["/sbin/ifconfig"],stdout=subprocess.PIPE)
   ip=p.communicate()
@@ -24,10 +24,10 @@ def _private_ip():
   return ips
 
 def ip():
-  ips = list(set(_ipaddress())-set(_private_ip()))
+  ips = list(set(ipaddress())-set(private_ip()))
   return ', '.join(ips)
   
-def _profiler_hardware_datatype():
+def profiler_hardware_datatype():
   data = filter(None, subprocess.Popen(["/usr/sbin/system_profiler","SPHardwareDataType"], stdout=subprocess.PIPE).communicate()[0].split('\n'))
   data_dict = {}
   for d in data[2:]:
@@ -35,16 +35,16 @@ def _profiler_hardware_datatype():
   return data_dict
 
 def memory():
-  return _profiler_hardware_datatype()['Memory']
+  return profiler_hardware_datatype()['Memory']
 
 def os_name():
   return subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE).communicate()[0].split('\n')[0].split('\t')[1]
 
 def cpu():
-  return _profiler_hardware_datatype()['Processor Name']
+  return profiler_hardware_datatype()['Processor Name']
 
 def serial_number():
-  return _profiler_hardware_datatype()['Serial Number (system)']
+  return profiler_hardware_datatype()['Serial Number (system)']
 
 def disk():
     p = subprocess.Popen(["df","-h"], stdout=subprocess.PIPE).communicate()[0].split('\n')
@@ -58,10 +58,7 @@ def disk():
     return ', '.join('{0} {1}'.format(key, val) for key, val in sorted(data_dict.items()))
 
 def model():
-    return _profiler_hardware_datatype()['Model Name']
+    return profiler_hardware_datatype()['Model Name']
 
 def child_ip():
-    return 'N/A'
-
-def category():
-    return 'OSX'
+    return "N/A"

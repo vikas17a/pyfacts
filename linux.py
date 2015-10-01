@@ -2,13 +2,13 @@ import re
 import subprocess
 import socket
 
-def _ipaddress():
+def ipaddress():
   p = subprocess.Popen(["/sbin/ip","addr","show"], stdout=subprocess.PIPE)
   ip=p.communicate()
   pattern = re.compile(r'inet\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
   return pattern.findall(ip[0])
 
-def _private_ip():
+def private_ip():
   ips=[]
   p=subprocess.Popen(["/sbin/ip","addr","show"],stdout=subprocess.PIPE)
   ip=p.communicate()
@@ -24,7 +24,7 @@ def _private_ip():
   return ips
   
 def ip():
-  ips = list(set(_ipaddress())-set(_private_ip()))
+  ips = list(set(ipaddress())-set(private_ip()))
   if len(ips) > 0:
       return ', '.join(ips)
   else:
@@ -63,11 +63,6 @@ def disk():
                 data_dict[mount.split()[-1]] = mount.split()[1]
     return ', '.join('{0} {1}'.format(key, val) for key, val in sorted(data_dict.items()))
 
-def category():
-    return 'linux'
-
-def child_ip():
-    return 'N/A'
 
 def model():
     try:
@@ -76,3 +71,6 @@ def model():
         return  model.communicate()[0].split(':')[-1].strip().strip('\n')
     except:
         return "N/A"
+
+def child_ip():
+    return "N/A"
