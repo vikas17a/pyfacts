@@ -112,8 +112,7 @@ def child_ip():
         offset = [n for (n, e) in enumerate(data1) if e == 'ipAddress'][10]
         vm[vm_id].append(data1[offset+2][1:-2])
       elif val == 'unset':
-        pass
-        #vm[vm_id].append('unset'+ip[0])
+        vm[vm_id].append(val)
       else:
         vm[vm_id].append(data[offset+2][1:-2])
     child_ip_os = ""
