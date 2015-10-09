@@ -26,7 +26,10 @@ except:
 facts={}
 for method in dir(FactsLib):
   if method[0] != '_' and method[0] != 'profiler_hardware_datatype' and type(getattr(FactsLib,method)) is not ModuleType:
+  try:
     facts[str(method)] = getattr(FactsLib,method)()
+  except:
+    pass
   facts["time"] = str(datetime.datetime.utcnow())
 try:
   custom_facts=open('custom_facts')

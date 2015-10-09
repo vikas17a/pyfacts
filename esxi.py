@@ -8,11 +8,36 @@ def profile():
          data_dict[d.split(':')[0].strip()] = d.split(':')[-1].strip()
      return data_dict
 
-def ip():
+def ipaddress():
+  p = subprocess.Popen(["esxcli","network","ip","interface","ipv4","get"], stdout=subprocess.PIPE)
+  ip = p.communicate()
+  pattern = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+  return pattern.findall(ip[0])[::3]
+
+def private_ip():
+  ips=[]
+  p = subprocess.Popen(["esxcli","network","ip","interface","ipv4","get"], stdout=subprocess.PIPE)
+  ip=p.communicate()
+  pattern=re.compile(r'(192\.168\.\d{1,3}\.\d{1,3})')
+  ips.extend(pattern.findall(ip[0])[::3])
+  pattern=re.compile(r'(10\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+  ips.extend(pattern.findall(ip[0])[::3])
+  pattern=re.compile(r'(127\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+  ips.extend(pattern.findall(ip[0])[::3])
+  pattern=re.compile(r'(172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3})')
+  for ip_data in pattern.findall(ip[0][::3]):
+    ips.append(ip_data[0])
+  return ips
+
+def testip():
     p = subprocess.Popen(["esxcli","network","ip","interface","ipv4","get"], stdout=subprocess.PIPE)
     ip = p.communicate()
     pattern = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
     return ', '.join(pattern.findall(ip[0])[::3])
+
+def ip():
+  ips = list(set(ipaddress())-set(private_ip()))
+  return ', '.join(ips)
 
 def memory():
     p = subprocess.Popen(["esxcli","hardware","memory","get"], stdout=subprocess.PIPE)
@@ -87,7 +112,8 @@ def child_ip():
         offset = [n for (n, e) in enumerate(data1) if e == 'ipAddress'][10]
         vm[vm_id].append(data1[offset+2][1:-2])
       elif val == 'unset':
-        vm[vm_id].append('unset'+ip[0])
+        pass
+        #vm[vm_id].append('unset'+ip[0])
       else:
         vm[vm_id].append(data[offset+2][1:-2])
     child_ip_os = ""
