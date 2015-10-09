@@ -35,7 +35,7 @@ def ip():
          return ""
 
 def os_name():
-  return subprocess.Popen(["uname"], stdout=subprocess.PIPE).communicate()[0]
+  return subprocess.Popen(["head", "-1", "/etc/issue"], stdout=subprocess.PIPE).communicate()[0].strip('\n')
 
 def memory():
   mem = int(subprocess.Popen(["grep","MemTotal","/proc/meminfo"], stdout=subprocess.PIPE).communicate()[0].split()[1:2][0])/1024
