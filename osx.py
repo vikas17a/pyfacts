@@ -38,10 +38,10 @@ def memory():
   return profiler_hardware_datatype()['Memory']
 
 def os_name():
-  return subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE).communicate()[0].split('\n')[0].split('\t')[1]
+  return subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE).communicate()[0].split('\n')[0].split('\t')[1] + " " +  subprocess.Popen(["sw_vers"], stdout=subprocess.PIPE).communicate()[0].split('\n')[1].split('\t')[1]
 
 def cpu():
-  return profiler_hardware_datatype()['Processor Name']
+  return profiler_hardware_datatype()['Processor Name'] + " " + profiler_hardware_datatype()["Processor Speed"]
 
 def cpu_cores():
   try:
