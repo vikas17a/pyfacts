@@ -1,5 +1,5 @@
 *.py[cod]
-
+custom_facts
 # C extensions
 *.so
 
