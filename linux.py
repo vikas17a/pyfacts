@@ -23,4 +23,5 @@ def cpu_cores():
 def cpu_threads():
   return subprocess.Popen(["grep","-c","processor","/proc/cpuinfo"], stdout=subprocess.PIPE).communicate()[0].split()[-1]
 
-
+def os_name():
+  return subprocess.Popen(["head", "-1", "/etc/issue"], stdout=subprocess.PIPE).communicate()[0].strip('\n')
