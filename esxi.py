@@ -115,6 +115,11 @@ def child_ip():
         vm[vm_id].append(val)
       else:
         vm[vm_id].append(data[offset+2][1:-2])
+      try:
+        offset = data.index('memoryReservation')
+        vm[vm_id].append(str(data[offset+2][:-1]) + 'MB')
+      except:
+        vm[vm_id].append('0')
     child_ip_os = ""
     for key, val in vm.items():
         child_ip_os = child_ip_os + ' '.join(val) + "<br>"
