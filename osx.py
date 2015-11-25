@@ -64,7 +64,7 @@ def disk():
     return ', '.join('{0} {1}'.format(key, val) for key, val in sorted(data_dict.items()))
 
 def model():
-    return profiler_hardware_datatype()['Model Name']
+    return profiler_hardware_datatype()['Model Identifier']
 
 def child_ip():
     return "N/A"
